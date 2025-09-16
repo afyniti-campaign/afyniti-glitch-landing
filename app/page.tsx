@@ -187,19 +187,19 @@ export default function AfynitiGlitch() {
           if(u_time > u_bgFreezeAt){ effective = 0.0; t = u_bgFreezeAt * 0.6; }
         }
 
-        // Aspect ratio preservation and centering
+        // Aspect ratio preservation - scale to cover screen, letterbox when screen is wider
         float screenAspect = u_res.x / u_res.y;
         float bgAspect = u_bgWH.x / u_bgWH.y;
         vec2 bgUV = uv;
 
-        if (screenAspect > bgAspect) {
-          // Screen is wider than background - fit by height, center horizontally
-          float scale = screenAspect / bgAspect;
-          bgUV.x = (bgUV.x - 0.5) * scale + 0.5;
+        if (bgAspect > screenAspect) {
+            // Image is wider than screen - scale to fill height, crop sides
+            float scale = screenAspect / bgAspect;
+            bgUV.x = (bgUV.x - 0.5) * scale + 0.5;
         } else {
-          // Screen is taller than background - fit by width, center vertically
-          float scale = bgAspect / screenAspect;
-          bgUV.y = (bgUV.y - 0.5) * scale + 0.5;
+            // Image is taller than screen - scale to fill width, crop vertically
+            float scale = bgAspect / screenAspect;
+            bgUV.y = (bgUV.y - 0.5) * scale + 0.5;
         }
 
         float mousePush = (u_mouse.x - 0.5) * 0.012;
@@ -441,7 +441,7 @@ export default function AfynitiGlitch() {
       }
 
       // Check for breakpoint change and switch background image if needed
-      const isMobile = window.innerWidth < 768
+      const isMobile = window.innerWidth < 560
       const newBreakpoint = isMobile ? 'mobile' : 'desktop'
       if (newBreakpoint !== currentBreakpointRef.current) {
         currentBreakpointRef.current = newBreakpoint
